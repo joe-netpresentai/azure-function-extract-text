@@ -1,6 +1,5 @@
 import azure.functions as func
 import logging
-import json
 import base64
 import io
 import docx  # python-docx
@@ -29,19 +28,20 @@ def ExtractTextFromDocument(req: func.HttpRequest) -> func.HttpResponse:
         
         extracted_text = ""
 
-        # Check file type and extract text
+        # Section: DOCX file handling
         if file_name.lower().endswith('.docx'):
             document = docx.Document(file_stream)
             for para in document.paragraphs:
                 extracted_text += para.text + "\n"
-        
+
+        # Section: PDF file handling
         elif file_name.lower().endswith('.pdf'):
             reader = PdfReader(file_stream)
             for page in reader.pages:
                 page_text = page.extract_text()
                 if page_text:
                     extracted_text += page_text + "\n"
-        
+
         else:
             return func.HttpResponse("Unsupported file type. Please use .docx or .pdf.", status_code=400)
 
